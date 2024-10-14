@@ -1,0 +1,39 @@
+=====================================================================
+
+TECNOLOGIAS:
+ - NODE.JS (ECOSISTEMA)
+ - NPM (GERENCIADOR DE PACOTES)
+ - MONGODB (BANCO DE DADOS)
+
+BIBLIOTECAS UTILIZADAS:
+ - EXPRESS (FRAMEWORK)
+ - Primas.io (MANIPULAR O BANCO DE DADOS)
+
+=====================================================================
+
+- Para rodar o servidor utilize node server.js.
+
+- Extensão VSCODE Thunder Client para ver as respostas das rotas para o backend. (POST / GET / PUT / DELETE)
+
+- node --watch server.js (para que toda vez que mudar alguma coisa no código ele restarta o servidor automaticamente.)
+
+- npx prisma studio (PARA MONITORAR/VISUALIZAR O BANCO DE DADOS)
+
+- npx prisma generate reinicia nosso branco
+
+- npm install swagger-jsdoc swagger-ui-express
+
+=====================================================================
+
+-->> Body Params (POST / PUT) -->> PARA INFORMAÇÕES DELICADAS "PRIVADAS"
+ Exemplo: {
+            "name": "Maria", "id": 22
+          } 
+
+ -->> Route Params (GET / PUT / DELETE) -->> BUSCAR, DELETAR, EDITAR ((ALGO ESPECIFICO))
+ Exemplo: http://www.localhost:3000/users/6709b1f01875007bd5a57225
+
+ -->> Query Params (GET) -->> FAZER CONSULTAS
+ Exemplo: http://www.localhost:3000/users?name=Maria&age=25
+
+=====================================================================
