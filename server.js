@@ -1,10 +1,12 @@
 import express from 'express'
 import { PrismaClient } from '@prisma/client'
+import { swaggerDocs, swaggerUi } from './swagger.js';
 
 const prisma = new PrismaClient()
 
 const app = express()
 app.use(express.json())
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 // CRIA USUARIO
 app.post('/users', async (request, response) => {
