@@ -21,6 +21,7 @@ model User {
   email   String   @unique
   age     Int
   gender  String
+  password String
 }
 
 model Doctor {
@@ -29,4 +30,5 @@ model Doctor {
   crm     String   @unique
   phone   String
   email   String   @unique
+  specialty String
 }

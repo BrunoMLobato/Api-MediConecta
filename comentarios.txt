@@ -4,6 +4,8 @@ TECNOLOGIAS:
  - NODE.JS (ECOSISTEMA)
  - NPM (GERENCIADOR DE PACOTES)
  - MONGODB (BANCO DE DADOS)
+ - bcrypt
+ - JWT (JSON Web Token) para gerar um token de autenticação.
 
 BIBLIOTECAS UTILIZADAS:
  - EXPRESS (FRAMEWORK)
@@ -23,6 +25,8 @@ BIBLIOTECAS UTILIZADAS:
 
 - npm install swagger-jsdoc swagger-ui-express
 
+- npm install bcrypt jsonwebtoken
+
 =====================================================================
 
 -->> Body Params (POST / PUT) -->> PARA INFORMAÇÕES DELICADAS "PRIVADAS"
@@ -37,3 +41,5 @@ BIBLIOTECAS UTILIZADAS:
  Exemplo: http://www.localhost:3000/users?name=Maria&age=25
 
 =====================================================================
+
+ - JWT (JSON Web Token) gera um token de autenticação.

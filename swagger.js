@@ -27,6 +27,31 @@ export { swaggerDocs, swaggerUi };
 
 /**
  * @swagger
+ * /login:
+ *   post:
+ *     tags: [Usuários]
+ *     summary: Realiza o login de um usuário
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Login'
+ *     responses:
+ *       200:
+ *         description: Login bem-sucedido
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/TokenResponse'
+ *       401:
+ *         description: Credenciais inválidas
+ *       404:
+ *         description: Usuário não encontrado
+ */
+
+/**
+ * @swagger
  * components:
  *   schemas:
  *     User:
@@ -44,6 +69,8 @@ export { swaggerDocs, swaggerUi };
  *           type: string
  *         phone:
  *           type: string
+ *         password:
+ *           type: string
  *     Doctor:
  *       type: object
  *       properties:
@@ -54,6 +81,18 @@ export { swaggerDocs, swaggerUi };
  *         email:
  *           type: string
  *         phone:
+ *           type: string
+ *     Login:
+ *       type: object
+ *       properties:
+ *         email:
+ *           type: string
+ *         password:
+ *           type: string
+ *     TokenResponse:
+ *       type: object
+ *       properties:
+ *         token:
  *           type: string
  */
 
