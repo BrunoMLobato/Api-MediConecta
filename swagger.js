@@ -82,6 +82,8 @@ export { swaggerDocs, swaggerUi };
  *           type: string
  *         phone:
  *           type: string
+ *         specialty:
+ *           type: string
  *     Login:
  *       type: object
  *       properties:

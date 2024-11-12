@@ -38,7 +38,6 @@ app.post('/login', async (request, response) => {
 
 // CRIA USUARIO com senha criptografada
 app.post('/users', async (request, response) => {
-    console.log("Dados recebidos:", request.body);  // Isso ajudará a verificar se `name` está realmente vindo.
     const { name, cpf, email, age, gender, phone, password } = request.body;
 
     if (!name) {
@@ -61,8 +60,17 @@ app.post('/users', async (request, response) => {
         });
         response.status(201).json(newUser);
     } catch (error) {
+        if (error.code == "P2002") {
+            console.log("Eroo na chave unica")
+            if (error.meta.target == 'User_cpf_key') {
+                response.status(500).json({ error: "CPF já existente" })
+            }
+            if (error.meta.target == 'User_email_key') {
+                response.status(500).json({ error: "EMAIL já existente" })
+            }
+        }
         console.error("Erro ao criar usuário:", error);
-        response.status(500).json({ error: "Erro ao criar usuário" });
+        response.status(500).json({ error: error });
     }
 });
 
@@ -129,18 +137,35 @@ app.delete('/users/:id', async (request, response) => {
     response.status(200).json({ message: "Usuário Foi Deletado Com Sucesso!" })
 })
 
-// Cadastro de médico
+// Cadastro de médico com tratamento de erros
 app.post('/doctors', async (request, response) => {
-    const doctor = await prisma.doctor.create({
-        data: {
-            crm: request.body.crm,
-            name: request.body.name,
-            email: request.body.email,
-            phone: request.body.phone,
-            specialty: request.body.specialty
+    const { crm, name, email, phone, specialty } = request.body;
+
+    try {
+        const doctor = await prisma.doctor.create({
+            data: {
+                crm,
+                name,
+                email,
+                phone,
+                specialty
+            }
+        });
+        response.status(201).json(doctor);
+    } catch (error) {
+        if (error.code == "P2002") {
+            console.log("Erro na chave única");
+            if (error.meta.target == 'Doctor_crm_key') {
+                response.status(500).json({ error: "CRM já existente" });
+            }
+            if (error.meta.target == 'Doctor_email_key') {
+                response.status(500).json({ error: "EMAIL já existente" });
+            }
+        } else {
+            console.error("Erro ao criar médico:", error);
+            response.status(500).json({ error: error });
         }
-    });
-    response.status(201).json(doctor);
+    }
 });
 
 // Listagem de médicos
