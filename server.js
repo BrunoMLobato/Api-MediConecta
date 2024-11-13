@@ -1,13 +1,16 @@
-import express from 'express'
-import { PrismaClient } from '@prisma/client'
+import express from 'express';
+import cors from 'cors'; // Importe o pacote cors
+import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { swaggerDocs, swaggerUi } from './swagger.js';
 
-const prisma = new PrismaClient()
+const prisma = new PrismaClient();
+const app = express();
 
-const app = express()
-app.use(express.json())
+// Configuração do CORS para permitir requisições de qualquer origem
+app.use(cors()); // Permite todas as origens
+app.use(express.json());
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 const SECRET_KEY = 'seu_segredo';
@@ -61,16 +64,17 @@ app.post('/users', async (request, response) => {
         response.status(201).json(newUser);
     } catch (error) {
         if (error.code == "P2002") {
-            console.log("Eroo na chave unica")
+            console.log("Erro na chave única");
             if (error.meta.target == 'User_cpf_key') {
-                response.status(500).json({ error: "CPF já existente" })
+                response.status(500).json({ error: "CPF já existente" });
             }
             if (error.meta.target == 'User_email_key') {
-                response.status(500).json({ error: "EMAIL já existente" })
+                response.status(500).json({ error: "EMAIL já existente" });
             }
+        } else {
+            console.error("Erro ao criar usuário:", error);
+            response.status(500).json({ error: error });
         }
-        console.error("Erro ao criar usuário:", error);
-        response.status(500).json({ error: error });
     }
 });
 
@@ -93,24 +97,18 @@ app.get('/protected', authenticateToken, (request, response) => {
     response.json({ message: 'Conteúdo protegido', userId: request.user.userId });
 });
 
-
 // LISTA USUARIO (LISTAGEM DE PACIENTES)
 app.get('/users', async (request, response) => {
-
-    const users = await prisma.user.findMany()
-
-    response.status(200).json(users)
-})
-
+    const users = await prisma.user.findMany();
+    response.status(200).json(users);
+});
 
 // ATUALIZA USUARIO (UPDATE DE PACIENTES)
 app.put('/users/:id', async (request, response) => {
-
     await prisma.user.update({
         where: {
             id: request.params.id
         },
-
         data: {
             name: request.body.name,
             cpf: request.body.cpf,
@@ -120,22 +118,19 @@ app.put('/users/:id', async (request, response) => {
             phone: request.body.phone,
             password: request.body.password
         }
-    })
-
-    response.status(201).json(request.body)
-})
+    });
+    response.status(201).json(request.body);
+});
 
 // DELETA USUARIO (EXCLUI PACIENTE)
 app.delete('/users/:id', async (request, response) => {
-
     await prisma.user.delete({
         where: {
             id: request.params.id
         },
-    })
-
-    response.status(200).json({ message: "Usuário Foi Deletado Com Sucesso!" })
-})
+    });
+    response.status(200).json({ message: "Usuário foi deletado com sucesso!" });
+});
 
 // Cadastro de médico com tratamento de erros
 app.post('/doctors', async (request, response) => {
@@ -201,4 +196,6 @@ app.delete('/doctors/:id', async (request, response) => {
     response.status(200).json({ message: "Médico foi deletado com sucesso!" });
 });
 
-app.listen(3000) // PORTA
+app.listen(3000, () => {
+    console.log('Servidor rodando na porta 3000');
+});
