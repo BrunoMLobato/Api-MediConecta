@@ -101,6 +101,7 @@ app.get('/protected', authenticateToken, (request, response) => {
 // LISTA USUARIO (LISTAGEM DE PACIENTES)
 app.get('/users', async (request, response) => {
     const users = await prisma.user.findMany();
+    console.log(users);
     response.status(200).json(users);
 });
 
