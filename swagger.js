@@ -248,3 +248,84 @@ export { swaggerDocs, swaggerUi };
  *       200:
  *         description: Médico deletado com sucesso
  */
+/**
+ * @swagger
+ * /specialties:
+ *   get:
+ *     tags: [Médicos]
+ *     summary: Lista todas as especialidades e os médicos de cada especialidade
+ *     responses:
+ *       200:
+ *         description: Lista de especialidades com seus médicos
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   specialty:
+ *                     type: string
+ *                   doctors:
+ *                     type: array
+ *                     items:
+ *                       type: string
+ */
+
+// Endpoint para criar um agendamento
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     Appointment:
+ *       type: object
+ *       required:
+ *         - specialty
+ *         - doctorName
+ *         - date
+ *         - userId
+ *       properties:
+ *         specialty:
+ *           type: string
+ *           description: A especialidade do médico
+ *         doctorName:
+ *           type: string
+ *           description: O nome do médico
+ *         date:
+ *           type: string
+ *           format: date-time
+ *           description: A data do agendamento
+ *         userId:
+ *           type: string
+ *           description: O ID do usuário (paciente)
+ *       example:
+ *         specialty: Cardiologia
+ *         doctorName: Dr. João Silva
+ *         date: 2023-10-10T14:00:00Z
+ *         userId: 60d0fe4f5311236168a109ca
+ */
+
+/**
+ * @swagger
+ * /appointments:
+ *   post:
+ *     summary: Cria um novo agendamento
+ *     tags: [Appointments]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Appointment'
+ *     responses:
+ *       201:
+ *         description: Agendamento criado com sucesso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Appointment'
+ *       404:
+ *         description: Médico não encontrado
+ *       500:
+ *         description: Erro ao criar agendamento
+ */

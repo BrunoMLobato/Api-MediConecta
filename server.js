@@ -149,13 +149,17 @@ app.post('/doctors', async (request, response) => {
         });
         response.status(201).json(doctor);
     } catch (error) {
-        if (error.code == "P2002") {
-            console.log("Erro na chave única");
-            if (error.meta.target == 'Doctor_crm_key') {
-                response.status(500).json({ error: "CRM já existente" });
-            }
-            if (error.meta.target == 'Doctor_email_key') {
-                response.status(500).json({ error: "EMAIL já existente" });
+        // Verifica se o erro é de chave única (P2002)
+        if (error.code === 'P2002') {
+            console.log("Erro de chave única detectado");
+
+            // Verifica qual é o campo que violou a restrição de unicidade
+            if (error.meta.target.includes('crm')) {
+                response.status(400).json({ error: "CRM já existente" });
+            } else if (error.meta.target.includes('email')) {
+                response.status(400).json({ error: "Email já existente" });
+            } else {
+                response.status(400).json({ error: "Erro de chave única em outro campo" });
             }
         } else {
             console.error("Erro ao criar médico:", error);
@@ -166,8 +170,12 @@ app.post('/doctors', async (request, response) => {
 
 // Listagem de médicos
 app.get('/doctors', async (request, response) => {
-    const doctors = await prisma.doctor.findMany();
-    response.status(200).json(doctors);
+    try {
+        const doctors = await prisma.doctor.findMany();
+        response.status(200).json(doctors);
+    } catch (error) {
+        response.status(500).json({ message: 'Erro ao listar médicos', error });
+    }
 });
 
 // Atualização de médico
@@ -196,6 +204,77 @@ app.delete('/doctors/:id', async (request, response) => {
     });
     response.status(200).json({ message: "Médico foi deletado com sucesso!" });
 });
+
+
+// Endpoint para listar todas as especialidades com todos os médicos de cada especialidade
+app.get('/specialties', async (request, response) => {
+    try {
+        const doctorsBySpecialty = await prisma.doctor.findMany({
+            select: {
+                specialty: true,
+                name: true
+            },
+            orderBy: { specialty: 'asc' }
+        });
+
+        const specialties = doctorsBySpecialty.reduce((acc, doctor) => {
+            if (!acc[doctor.specialty]) {
+                acc[doctor.specialty] = [];
+            }
+            acc[doctor.specialty].push(doctor.name);
+            return acc;
+        }, {});
+
+        const specialtiesArray = Object.keys(specialties).map(specialty => ({
+            specialty,
+            doctors: specialties[specialty]
+        }));
+
+        response.status(200).json(specialtiesArray);
+    } catch (error) {
+        console.error("Erro ao listar especialidades:", error);
+        response.status(500).json({ error: "Erro ao listar especialidades" });
+    }
+});
+
+// Endpoint para criar um agendamento
+app.post('/appointments', async (request, response) => {
+    const { specialty, doctorName, date, userId } = request.body;
+
+    try {
+        const doctor = await prisma.doctor.findFirst({
+            where: {
+                specialty,
+                name: doctorName
+            }
+        });
+
+        if (!doctor) {
+            return response.status(404).json({ message: 'Médico não encontrado' });
+        }
+
+        const parsedDate = parseISO(date);
+        const formattedDate = format(parsedDate, 'yyyy-MM-dd HH:mm:ss');
+
+        const appointment = await prisma.appointment.create({
+            data: {
+                date: new Date(formattedDate),
+                doctorId: doctor.id,
+                userId: userId
+            }
+        });
+
+        response.status(201).json({
+            ...appointment,
+            date: format(parsedDate, 'dd/MM/yyyy HH:mm')
+        });
+    } catch (error) {
+        console.error("Erro ao criar agendamento:", error);
+        response.status(500).json({ error: "Erro ao criar agendamento" });
+    }
+});
+
+
 
 app.listen(3000, () => {
     console.log('Servidor rodando na porta 3000');

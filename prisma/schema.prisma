@@ -14,21 +14,32 @@ datasource db {
 }
 
 model User {
-  id      String   @id @default(auto()) @map("_id") @db.ObjectId
-  name    String
-  cpf     String   @unique
-  phone   String
-  email   String   @unique
-  age     Int
-  gender  String
+  id       String      @id @default(auto()) @map("_id") @db.ObjectId
+  name     String
+  cpf      String   @unique
+  email    String   @unique
+  age      Int
+  gender   String
+  phone    String
   password String
+  appointments Appointment[]
 }
 
 model Doctor {
-  id      String   @id @default(auto()) @map("_id") @db.ObjectId
-  name    String
-  crm     String   @unique
-  phone   String
-  email   String   @unique
+  id        String      @id @default(auto()) @map("_id") @db.ObjectId
+  crm       String   @unique
+  name      String
+  email     String   @unique
+  phone     String
   specialty String
+  appointments Appointment[]
+}
+
+model Appointment {
+  id          String       @id @default(auto()) @map("_id") @db.ObjectId
+  date        DateTime
+  doctorId    String
+  doctor      Doctor       @relation(fields: [doctorId], references: [id])
+  userId      String
+  user        User         @relation(fields: [userId], references: [id])
 }
