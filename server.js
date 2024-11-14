@@ -1,5 +1,5 @@
 import express from 'express';
-import cors from 'cors'; // Importe o pacote cors
+import cors from 'cors';
 import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
@@ -8,7 +8,7 @@ import { swaggerDocs, swaggerUi } from './swagger.js';
 const prisma = new PrismaClient();
 const app = express();
 
-// Configuração do CORS para permitir requisições de qualquer origem
+// Configuração do Cors permitir requisições de qualquer origem
 app.use(cors()); // Permite todas as origens
 app.use(express.json());
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
@@ -17,6 +17,7 @@ const SECRET_KEY = 'seu_segredo';
 
 app.post('/login', async (request, response) => {
     const { email, password } = request.body;
+    console.log(request.body);
 
     try {
         const user = await prisma.user.findUnique({ where: { email } });
@@ -31,7 +32,7 @@ app.post('/login', async (request, response) => {
             return response.status(401).json({ message: 'Credenciais inválidas' });
         }
 
-        const token = jwt.sign({ userId: user.id }, SECRET_KEY, { expiresIn: '1h' });
+        const token = jwt.sign({ userId: user.id, email: email, name: user.name }, SECRET_KEY, { expiresIn: '1h' });
 
         response.status(200).json({ token });
     } catch (error) {
