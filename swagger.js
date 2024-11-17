@@ -450,7 +450,36 @@ export { swaggerDocs, swaggerUi };
 
 
 
-
+/**
+ * @swagger
+ * /todosmedicos:
+ *   get:
+ *     tags: [Médicos]
+ *     summary: Lista todos os médicos e suas especialidades
+ *     responses:
+ *       200:
+ *         description: Lista de todos os médicos e suas especialidades
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   name:
+ *                     type: string
+ *                   specialty:
+ *                     type: string
+ *       500:
+ *         description: Erro ao listar médicos
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ */
 
 
 

@@ -325,6 +325,31 @@ app.get('/appointments/doctor/:crm', async (request, response) => {
 
 
 
+
+
+// Endpoint para listar todos os médicos e suas especialidades
+app.get('/todosmedicos', async (req, res) => {
+    try {
+        const doctors = await prisma.doctor.findMany({
+            select: {
+                name: true,
+                specialty: true,
+            },
+        });
+        res.status(200).json(doctors);
+    } catch (error) {
+        console.error("Erro ao listar médicos:", error);
+        res.status(500).json({ error: "Erro ao listar médicos" });
+    }
+});
+
+
+
+
+
+
+
+
 app.listen(3000, () => {
     console.log('Servidor rodando na porta 3000');
 });
