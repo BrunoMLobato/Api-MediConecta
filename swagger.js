@@ -248,15 +248,24 @@ export { swaggerDocs, swaggerUi };
  *       200:
  *         description: Médico deletado com sucesso
  */
+
+
 /**
  * @swagger
- * /specialties:
+ * /specialties/{specialty}:
  *   get:
  *     tags: [Médicos]
- *     summary: Lista todas as especialidades e os médicos de cada especialidade
+ *     summary: Lista todos os médicos de uma especialidade específica
+ *     parameters:
+ *       - in: path
+ *         name: specialty
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Nome da especialidade
  *     responses:
  *       200:
- *         description: Lista de especialidades com seus médicos
+ *         description: Lista de médicos da especialidade
  *         content:
  *           application/json:
  *             schema:
@@ -264,13 +273,24 @@ export { swaggerDocs, swaggerUi };
  *               items:
  *                 type: object
  *                 properties:
+ *                   id:
+ *                     type: integer
+ *                   name:
+ *                     type: string
  *                   specialty:
  *                     type: string
- *                   doctors:
- *                     type: array
- *                     items:
- *                       type: string
+ *       500:
+ *         description: Erro ao listar especialidades
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
  */
+
+
 
 /**
  * @swagger
@@ -365,17 +385,64 @@ export { swaggerDocs, swaggerUi };
  */
 
 
-
-
-
-
-
-
-// comeca aqui
-
-
-
-
+// Endpoint para obter todos os agendamentos de um determinado médico pelo CRM
+/**
+ * @swagger
+ * /appointments/doctor/{crm}:
+ *   get:
+ *     summary: Obtém todos os agendamentos de um determinado médico pelo CRM
+ *     parameters:
+ *       - in: path
+ *         name: crm
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: O CRM do médico
+ *     responses:
+ *       200:
+ *         description: Lista de agendamentos do médico
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: integer
+ *                     example: 1
+ *                   date:
+ *                     type: string
+ *                     format: date-time
+ *                     example: '2023-10-01T10:00:00Z'
+ *                   doctorId:
+ *                     type: integer
+ *                     example: 1
+ *                   userId:
+ *                     type: integer
+ *                     example: 1
+ *                   doctor:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: integer
+ *                         example: 1
+ *                       name:
+ *                         type: string
+ *                         example: 'Dr. João Silva'
+ *                       crm:
+ *                         type: string
+ *                         example: '123456'
+ *                   user:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: integer
+ *                         example: 1
+ *                       name:
+ *                         type: string
+ *                         example: 'Maria Souza'
+ */
 
 
 

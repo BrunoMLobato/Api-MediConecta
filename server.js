@@ -282,8 +282,45 @@ app.post('/appointments', async (request, response) => {
     }
 });
 
+// Endpoint para obter todos os agendamentos de um determinado médico pelo CRM
+app.get('/appointments/doctor/:crm', async (request, response) => {
+    const { crm } = request.params;
 
+    if (!crm) {
+        return response.status(400).json({ message: 'O CRM do médico é obrigatório' });
+    }
 
+    try {
+        const doctor = await prisma.doctor.findFirst({
+            where: {
+                crm: crm,
+            }
+        });
+
+        if (!doctor) {
+            return response.status(404).json({ message: 'Médico não encontrado' });
+        }
+
+        const appointments = await prisma.appointment.findMany({
+            where: {
+                doctorId: doctor.id,
+            },
+            include: {
+                doctor: true,
+                user: true,
+            },
+        });
+
+        if (appointments.length === 0) {
+            return response.status(404).json({ message: 'Nenhum agendamento encontrado para este médico' });
+        }
+
+        response.status(200).json(appointments);
+    } catch (error) {
+        console.error("Erro ao obter agendamentos:", error);
+        response.status(500).json({ error: "Erro ao obter agendamentos" });
+    }
+});
 
 
 
