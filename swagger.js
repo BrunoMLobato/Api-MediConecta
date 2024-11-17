@@ -272,60 +272,118 @@ export { swaggerDocs, swaggerUi };
  *                       type: string
  */
 
-// Endpoint para criar um agendamento
-/**
- * @swagger
- * components:
- *   schemas:
- *     Appointment:
- *       type: object
- *       required:
- *         - specialty
- *         - doctorName
- *         - date
- *         - userId
- *       properties:
- *         specialty:
- *           type: string
- *           description: A especialidade do médico
- *         doctorName:
- *           type: string
- *           description: O nome do médico
- *         date:
- *           type: string
- *           format: date-time
- *           description: A data do agendamento
- *         userId:
- *           type: string
- *           description: O ID do usuário (paciente)
- *       example:
- *         specialty: Cardiologia
- *         doctorName: Dr. João Silva
- *         date: 2023-10-10T14:00:00Z
- *         userId: 60d0fe4f5311236168a109ca
- */
-
 /**
  * @swagger
  * /appointments:
  *   post:
  *     summary: Cria um novo agendamento
+ *     description: Cria um novo agendamento para um médico específico.
  *     tags: [Appointments]
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/Appointment'
+ *             type: object
+ *             properties:
+ *               specialty:
+ *                 type: string
+ *                 description: Especialidade do médico
+ *                 example: "Cardiologista"
+ *               doctorId:
+ *                 type: string
+ *                 description: ID do médico
+ *                 example: "1"
+ *               date:
+ *                 type: string
+ *                 format: date-time
+ *                 description: Data e hora do agendamento
+ *                 example: "2024-12-31T23:59:00Z"
+ *               userId:
+ *                 type: string
+ *                 description: ID do usuário
+ *                 example: "123"
  *     responses:
  *       201:
  *         description: Agendamento criado com sucesso
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/Appointment'
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: integer
+ *                   description: ID do agendamento
+ *                   example: 1
+ *                 date:
+ *                   type: string
+ *                   description: Data e hora do agendamento formatada
+ *                   example: "31/12/2024 23:59"
+ *                 doctorId:
+ *                   type: string
+ *                   description: ID do médico
+ *                   example: "1"
+ *                 userId:
+ *                   type: string
+ *                   description: ID do usuário
+ *                   example: "123"
+ *                 year:
+ *                   type: string
+ *                   example: "2024"
+ *                 month:
+ *                   type: string
+ *                   example: "12"
+ *                 day:
+ *                   type: string
+ *                   example: "31"
+ *                 hour:
+ *                   type: string
+ *                   example: "23"
+ *                 minute:
+ *                   type: string
+ *                   example: "59"
  *       404:
  *         description: Médico não encontrado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Médico não encontrado"
  *       500:
  *         description: Erro ao criar agendamento
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Erro ao criar agendamento"
  */
+
+
+
+
+
+
+
+
+// comeca aqui
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -4,6 +4,7 @@ import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { swaggerDocs, swaggerUi } from './swagger.js';
+import { parseISO, format } from 'date-fns';
 
 const prisma = new PrismaClient();
 const app = express();
@@ -14,6 +15,8 @@ app.use(express.json());
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 const SECRET_KEY = 'seu_segredo';
+
+
 
 app.post('/login', async (request, response) => {
     const { email, password } = request.body;
@@ -208,30 +211,31 @@ app.delete('/doctors/:id', async (request, response) => {
 
 
 // Endpoint para listar todas as especialidades com todos os médicos de cada especialidade
-app.get('/specialties', async (request, response) => {
+app.get('/specialties/:specialty', async (request, response) => {
     try {
+        const { specialty } = request.params;
         const doctorsBySpecialty = await prisma.doctor.findMany({
-            select: {
-                specialty: true,
-                name: true
-            },
-            orderBy: { specialty: 'asc' }
+            where: {
+                specialty: specialty,
+            }
         });
 
-        const specialties = doctorsBySpecialty.reduce((acc, doctor) => {
-            if (!acc[doctor.specialty]) {
-                acc[doctor.specialty] = [];
-            }
-            acc[doctor.specialty].push(doctor.name);
-            return acc;
-        }, {});
+        // const specialties = doctorsBySpecialty.reduce((acc, doctor) => {
+        //     if (!acc[doctor.specialty]) {
+        //         acc[doctor.specialty] = [];
+        //     }
+        //     acc[doctor.specialty].push(doctor.name);
+        //     return acc;
+        // }, {});
 
-        const specialtiesArray = Object.keys(specialties).map(specialty => ({
-            specialty,
-            doctors: specialties[specialty]
-        }));
+        // const specialtiesArray = Object.keys(specialties).map(specialty => ({
+        //     specialty,
+        //     doctors: specialties[specialty]
+        // }));
 
-        response.status(200).json(specialtiesArray);
+        console.log(doctorsBySpecialty);
+
+        response.status(200).json(doctorsBySpecialty);
     } catch (error) {
         console.error("Erro ao listar especialidades:", error);
         response.status(500).json({ error: "Erro ao listar especialidades" });
@@ -240,13 +244,17 @@ app.get('/specialties', async (request, response) => {
 
 // Endpoint para criar um agendamento
 app.post('/appointments', async (request, response) => {
-    const { specialty, doctorName, date, userId } = request.body;
+    const { specialty, doctorId, date, userId } = request.body;
+
+    if (!specialty || !doctorId || !date || !userId) {
+        return response.status(400).json({ message: 'Todos os campos são obrigatórios' });
+    }
 
     try {
         const doctor = await prisma.doctor.findFirst({
             where: {
                 specialty,
-                name: doctorName
+                id: doctorId,
             }
         });
 
@@ -255,11 +263,10 @@ app.post('/appointments', async (request, response) => {
         }
 
         const parsedDate = parseISO(date);
-        const formattedDate = format(parsedDate, 'yyyy-MM-dd HH:mm:ss');
 
         const appointment = await prisma.appointment.create({
             data: {
-                date: new Date(formattedDate),
+                date: parsedDate,
                 doctorId: doctor.id,
                 userId: userId
             }
@@ -274,6 +281,10 @@ app.post('/appointments', async (request, response) => {
         response.status(500).json({ error: "Erro ao criar agendamento" });
     }
 });
+
+
+
+
 
 
 

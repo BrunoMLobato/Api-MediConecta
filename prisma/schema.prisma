@@ -38,6 +38,11 @@ model Doctor {
 model Appointment {
   id          String       @id @default(auto()) @map("_id") @db.ObjectId
   date        DateTime
+  year        String
+  month       String
+  day         String
+  hour        String
+  minute      String
   doctorId    String
   doctor      Doctor       @relation(fields: [doctorId], references: [id])
   userId      String
