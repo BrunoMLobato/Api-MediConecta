@@ -9,14 +9,12 @@ import { parseISO, format } from 'date-fns';
 const prisma = new PrismaClient();
 const app = express();
 
-// Configuração do Cors permitir requisições de qualquer origem
-app.use(cors()); // Permite todas as origens
+
+app.use(cors());
 app.use(express.json());
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 const SECRET_KEY = 'seu_segredo';
-
-
 
 app.post('/login', async (request, response) => {
     const { email, password } = request.body;
@@ -43,6 +41,20 @@ app.post('/login', async (request, response) => {
     }
 });
 
+// Middleware para verificar o token JWT
+function authenticateToken(request, response, next) {
+    const token = request.headers['authorization'];
+
+    if (!token) return response.status(403).json({ message: 'Token não fornecido' });
+
+    jwt.verify(token, SECRET_KEY, (err, user) => {
+        if (err) return response.status(403).json({ message: 'Token inválido' });
+
+        request.user = user;
+        next();
+    });
+}
+
 // CRIA USUARIO com senha criptografada
 app.post('/users', async (request, response) => {
     const { name, cpf, email, age, gender, phone, password } = request.body;
@@ -59,7 +71,7 @@ app.post('/users', async (request, response) => {
                 name,
                 cpf,
                 email,
-                age: parseInt(age),  // Converter age para número, caso seja string
+                age: parseInt(age),
                 gender,
                 phone,
                 password: hashedPassword
@@ -82,19 +94,6 @@ app.post('/users', async (request, response) => {
     }
 });
 
-// Middleware para verificar o token JWT
-function authenticateToken(request, response, next) {
-    const token = request.headers['authorization'];
-
-    if (!token) return response.status(403).json({ message: 'Token não fornecido' });
-
-    jwt.verify(token, SECRET_KEY, (err, user) => {
-        if (err) return response.status(403).json({ message: 'Token inválido' });
-
-        request.user = user;
-        next();
-    });
-}
 
 // Exemplo de rota protegida
 app.get('/protected', authenticateToken, (request, response) => {
