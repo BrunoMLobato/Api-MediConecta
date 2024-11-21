@@ -37,7 +37,7 @@ app.post('/login', async (request, response) => {
 
         const token = jwt.sign({ userId: user.id, email: email, name: user.name }, SECRET_KEY, { expiresIn: '1h' });
 
-        response.status(200).json({ token });
+        response.status(200).json({ token: token, userid: user.id });
     } catch (error) {
         response.status(500).json({ message: 'Erro ao fazer login', error });
     }
@@ -220,18 +220,6 @@ app.get('/specialties/:specialty', async (request, response) => {
             }
         });
 
-        // const specialties = doctorsBySpecialty.reduce((acc, doctor) => {
-        //     if (!acc[doctor.specialty]) {
-        //         acc[doctor.specialty] = [];
-        //     }
-        //     acc[doctor.specialty].push(doctor.name);
-        //     return acc;
-        // }, {});
-
-        // const specialtiesArray = Object.keys(specialties).map(specialty => ({
-        //     specialty,
-        //     doctors: specialties[specialty]
-        // }));
 
         console.log(doctorsBySpecialty);
 
@@ -245,11 +233,9 @@ app.get('/specialties/:specialty', async (request, response) => {
 // Endpoint para criar um agendamento
 app.post('/appointments', async (request, response) => {
     const { specialty, doctorId, date, userId } = request.body;
-
-    if (!specialty || !doctorId || !date || !userId) {
+    if (!specialty || !doctorId || !date) {
         return response.status(400).json({ message: 'Todos os campos são obrigatórios' });
     }
-
     try {
         const doctor = await prisma.doctor.findFirst({
             where: {
