@@ -268,6 +268,32 @@ app.post('/appointments', async (request, response) => {
     }
 });
 
+// Endpoint para deletar um agendamento
+app.delete('/appointments/:id', async (request, response) => {
+    const { id } = request.params;
+
+    try {
+        const appointment = await prisma.appointment.findUnique({
+            where: { id: id },
+        });
+
+        if (!appointment) {
+            return response.status(404).json({ message: 'Agendamento não encontrado' });
+        }
+
+        await prisma.appointment.delete({
+            where: { id: id },
+        });
+
+        response.status(200).json({ message: 'Agendamento deletado com sucesso' });
+    } catch (error) {
+        console.error("Erro ao deletar agendamento:", error);
+        response.status(500).json({ error: "Erro ao deletar agendamento" });
+    }
+});
+
+
+
 // Endpoint para obter todos os agendamentos de um determinado médico pelo CRM
 app.get('/appointments/doctor/:crm', async (request, response) => {
     const { crm } = request.params;

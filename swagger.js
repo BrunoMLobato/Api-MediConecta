@@ -384,6 +384,28 @@ export { swaggerDocs, swaggerUi };
  *                   example: "Erro ao criar agendamento"
  */
 
+/**
+ * @swagger
+ * /appointments/{id}:
+ *   delete:
+ *     summary: Deleta um agendamento
+ *     tags: [Agendamentos]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: ID do agendamento
+ *     responses:
+ *       200:
+ *         description: Agendamento deletado com sucesso
+ *       404:
+ *         description: Agendamento não encontrado
+ *       500:
+ *         description: Erro ao deletar agendamento
+ */
+
 
 // Endpoint para obter todos os agendamentos de um determinado médico pelo CRM
 /**
