@@ -406,6 +406,83 @@ export { swaggerDocs, swaggerUi };
  *         description: Erro ao deletar agendamento
  */
 
+/**
+ * @swagger
+ * paths:
+ *   /appointments/{id}/date:
+ *     put:
+ *       summary: Atualiza a data de um agendamento
+ *       parameters:
+ *         - name: id
+ *           in: path
+ *           required: true
+ *           description: ID do agendamento
+ *           schema:
+ *             type: string
+ *       requestBody:
+ *         required: true
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 newDate:
+ *                   type: string
+ *                   format: date-time
+ *                   example: "2033-12-31T23:59:59Z"
+ *       responses:
+ *         200:
+ *           description: Data do agendamento atualizada com sucesso
+ *           content:
+ *             application/json:
+ *               schema:
+ *                 type: object
+ *                 properties:
+ *                   message:
+ *                     type: string
+ *                   appointment:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: string
+ *                       date:
+ *                         type: string
+ *                         format: date-time
+ *                       doctorId:
+ *                         type: string
+ *                       userId:
+ *                         type: string
+ *         400:
+ *           description: A nova data é obrigatória
+ *           content:
+ *             application/json:
+ *               schema:
+ *                 type: object
+ *                 properties:
+ *                   error:
+ *                     type: string
+ *         404:
+ *           description: Agendamento não encontrado
+ *           content:
+ *             application/json:
+ *               schema:
+ *                 type: object
+ *                 properties:
+ *                   error:
+ *                     type: string
+ *         500:
+ *           description: Erro ao atualizar a data do agendamento
+ *           content:
+ *             application/json:
+ *               schema:
+ *                 type: object
+ *                 properties:
+ *                   error:
+ *                     type: string
+ *                   detalhes:
+ *                     type: string
+ */
+
 
 // Endpoint para obter todos os agendamentos de um determinado médico pelo CRM
 /**

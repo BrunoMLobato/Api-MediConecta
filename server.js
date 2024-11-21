@@ -335,8 +335,46 @@ app.get('/appointments/doctor/:crm', async (request, response) => {
 });
 
 
+// Endpoint para atualizar a data do agendamento
+app.put('/appointments/:id/date', async (request, response) => {
+    const { id } = request.params;
+    const { newDate } = request.body;
 
+    if (!newDate) {
+        return response.status(400).json({ error: 'A nova data é obrigatória.' });
+    }
 
+    try {
+        const appointment = await prisma.appointment.findUnique({
+            where: { id: id },
+        });
+
+        if (!appointment) {
+            return response.status(404).json({ error: 'Agendamento não encontrado.' });
+        }
+
+        const parsedDate = parseISO(newDate);
+
+        const updatedAppointment = await prisma.appointment.update({
+            where: { id: id },
+            data: { date: parsedDate },
+        });
+
+        response.status(200).json({
+            message: 'Data do agendamento atualizada com sucesso.',
+            appointment: {
+                ...updatedAppointment,
+                date: format(parsedDate, 'dd/MM/yyyy HH:mm'),
+            },
+        });
+    } catch (error) {
+        console.error('Erro ao atualizar a data do agendamento:', error);
+        response.status(500).json({
+            error: 'Erro ao atualizar a data do agendamento.',
+            detalhes: error.message,
+        });
+    }
+});
 
 
 // Endpoint para listar todos os médicos e suas especialidades
